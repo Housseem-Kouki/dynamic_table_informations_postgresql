@@ -1,0 +1,85 @@
+<p>firstone works!</p>
+
+
+<div class="input-group input-group-sm mb-3">
+    <div class="input-group-prepend">
+      <span class="input-group-text" id="inputGroup-sizing-sm">Table Name : </span>
+    </div>
+    <input type="text" [(ngModel)]="textInputTableName" class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm">
+  </div>
+  <button type="button" (click)="getConfigTable()" class="btn btn-info">Info</button>
+  <div *ngIf="showTableNotFoundError" class="text-danger">Table does not exist.</div>
+  <!-- Display the "Please enter a table name" message -->
+<div *ngIf="showEmptyInputMessage" class="text-danger">Please enter the name of a table.</div>
+<table class="table">
+    <thead class="thead-dark">
+      <tr>
+        <th scope="col">#</th>
+        <th scope="col">Column Name</th>
+        <th scope="col">Type</th>
+        <th scope="col">Length</th>
+        <th scope="col">to display</th>
+      </tr>
+    </thead>
+
+    <tbody  *ngFor="let config of listconfig;let i = index;">
+   
+
+      <tr>
+        <th scope="row">{{i+1}}</th>
+        <td>{{config.column_name}}</td>
+        <td>{{config.type}}</td>
+        <td>{{config.taille}}</td>
+        <td>
+          <div class="form-check form-switch">
+            <input class="form-check-input" type="checkbox" [(ngModel)]="columnsToDisplay[config.column_name]"
+              id="flexSwitchCheckChecked" checked>
+          </div>
+        </td>
+      </tr>
+    
+    </tbody>
+  </table>
+
+
+
+<!-- Bouton pour ouvrir le modal -->
+<div *ngIf="listconfig.length != 0">
+<button class="btn btn-primary" (click)="openModal(myModalContent)" [disabled]="listconfig.length === 0">Show Values of table {{textInputTableName}}</button>
+</div>
+<!-- Contenu du modal (défini par le template local référencé dans #myModalContent) -->
+<ng-template #myModalContent>
+  <div class="modal-header">
+    <h4 class="modal-title">{{textInputTableName}} Table</h4>
+    <button type="button" class="close" aria-label="Fermer" (click)="modalService.dismissAll()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <table class="table">
+      <thead class="thead-dark">
+        <tr>
+          <!-- Utilisation d'une boucle *ngFor pour afficher les en-têtes, en filtrant en fonction de columnsToShow -->
+          <ng-container *ngFor="let config of listconfig">
+            <ng-container *ngIf="columnsToDisplay[config.column_name]">
+              <th scope="col">{{ config.column_name }}</th>
+            </ng-container>
+          </ng-container>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Utilisation d'une boucle *ngFor pour afficher les données -->
+        <tr *ngFor="let objet of listDonnees">
+          <td *ngFor="let colonne of listconfig">
+            <!-- Utilisation de l'index et de la propriété "column_name" pour accéder aux valeurs correspondantes de chaque objet -->
+            {{ objet[colonne.column_name] }}
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+
+    
+    
+  </div>
+</ng-template>
